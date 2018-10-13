@@ -97,7 +97,6 @@ $employees->find()
         ]
     ]);
 ```
-
 ```sql
 SELECT 
   e.first_name,
