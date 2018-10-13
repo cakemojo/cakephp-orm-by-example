@@ -98,4 +98,41 @@ $employees->find()
     ]);
 ```
 
+```sql
+SELECT 
+  e.first_name,
+  s.from_date, 
+  s.salary
+FROM 
+  employees AS e
+  INNER JOIN salaries AS s ON e.id = (s.employee_id) 
+WHERE 
+  (
+    s.from_date BETWEEN '1985-12-01' 
+    AND '1987-12-01' 
+    AND s.salary > 60000
+  ) 
+LIMIT 
+  10
+```
 
+```php
+$employees
+    ->select([
+        'Employees.first_name',
+        'Salaries.from_date',
+        'Salaries.salary',
+    ])
+    ->innerJoinWith('Salaries');
+    $between = $employees->newExpr()->between(
+        'Salaries.from_date',
+        Time::create(1985, 12, 01),
+        Time::create(1987, 12, 01)
+    );
+    $greaterThan = $employees->newExpr()
+        ->gt('Salaries.salary', 60000);
+    $employees->where([
+        $between,
+        $greaterThan
+    ]);
+```
