@@ -88,6 +88,27 @@ $employees->find()
 
 - Note CakePHP generates 2 queries for the hasMany association, this strategy could improve performance in some cases
 
+# Filtering, top down
+
+```sql
+SELECT * FROM employees Employees LIMIT 1
+SELECT * FROM salaries Salaries WHERE (Salaries.employee_id in (10001) AND salary >= 1000)
+```
+
+```php
+$employees->hasMany('Salaries');
+$employees->find()
+    ->contain([
+        'Salaries' => function(\Cake\ORM\Query $q) {
+            return $q->where([
+                'salary >=' => 1000
+            ]);
+        }
+    ])
+    ->limit(1);
+```
+
+
 # Expressions and functions
 ---
 
