@@ -116,21 +116,23 @@ LIMIT
 ```
 
 ```php
-$employees
+$employees->hasMany('Salaries');
+$query = $employees->find();
+$query
     ->select([
         'Employees.first_name',
         'Salaries.from_date',
         'Salaries.salary',
     ])
     ->innerJoinWith('Salaries');
-    $between = $employees->newExpr()->between(
+    $between = $query->newExpr()->between(
         'Salaries.from_date',
-        Time::create(1985, 12, 01),
-        Time::create(1987, 12, 01)
+        \Cake\I18n\Time::create(1985, 12, 01),
+        \Cake\I18n\Time::create(1987, 12, 01)
     );
-    $greaterThan = $employees->newExpr()
+    $greaterThan = $query->newExpr()
         ->gt('Salaries.salary', 60000);
-    $employees->where([
+    $query->where([
         $between,
         $greaterThan
     ]);
