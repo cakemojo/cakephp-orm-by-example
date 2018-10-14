@@ -73,7 +73,9 @@ $employees->find()
 
 ```sql
 SELECT * FROM employees Employees LIMIT 1
-SELECT * FROM salaries Salaries INNER JOIN (SELECT (Employees.id) FROM employees Employees GROUP BY Employees.id  LIMIT 1) Employees ON Salaries.employee_id = (Employees.id)
+SELECT * FROM salaries Salaries 
+    INNER JOIN (SELECT (Employees.id) FROM employees Employees GROUP BY Employees.id  LIMIT 1) Employees 
+        ON Salaries.employee_id = (Employees.id)
 ```
 
 ```php
