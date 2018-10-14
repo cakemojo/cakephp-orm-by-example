@@ -14,6 +14,7 @@ We're using https://github.com/lorenzo/cakephp3-advanced-examples/blob/master/co
 
 * Let $employees be a `\App\Model\Table\EmployeesTable` instance
 * All PHP snippets will return a `\Cake\ORM\Query`
+* For simplicity, sql select `*` will be used instead of the full list of columns, even if the framework will use the columns names instead
 
 ## Using the console to test the examples
 
@@ -35,7 +36,7 @@ $employees = \Cake\ORM\TableRegistry::getTableLocator()->get('Employees');
 ---
 
 ```sql
-select * from employees;
+SELECT * FROM employees;
 ```
 
 ```php
@@ -43,16 +44,50 @@ $employees->find();
 ```
 ---
 ```sql
-select first_name, last_name from employees;
+SELECT first_name, last_name FROM employees;
 ```
 
 ```php
 $employees->find()
     ->select(['first_name', 'last_name']);
 ```
----
+
+# Associations and contain, hasMany
+
 ```sql
-select * from employees where     (CONCAT(first_name, ' ', last_name) LIKE 'luft aron%') OR
+SELECT * FROM employees Employees LIMIT 1;
+SELECT * FROM salaries Salaries WHERE Salaries.employee_id in (10001);
+```
+
+```php
+$employees->hasMany('Salaries');
+$employees->find()
+    ->contain('Salaries')
+    ->limit(1);
+```
+
+* Note CakePHP generates 2 queries for the hasMany association by default
+
+---
+
+```sql
+SELECT * FROM employees Employees LIMIT 1
+SELECT * FROM salaries Salaries INNER JOIN (SELECT (Employees.id) FROM employees Employees GROUP BY Employees.id  LIMIT 1) Employees ON Salaries.employee_id = (Employees.id)
+```
+
+```php
+$employees->hasMany('Salaries')
+    ->setStrategy(\Cake\ORM\Association\HasMany::STRATEGY_SUBQUERY);
+$employees->find()
+    ->contain('Salaries')
+    ->limit(1);
+```
+
+* Note CakePHP generates 2 queries for the hasMany association, this strategy could improve performance in some cases
+
+# Expressions and functions
+```sql
+SELECT * FROM employees WHERE (CONCAT(first_name, ' ', last_name) LIKE 'luft aron%') OR
 (CONCAT(last_name, ' ', first_name) LIKE 'luft aron%');
 ```
 
