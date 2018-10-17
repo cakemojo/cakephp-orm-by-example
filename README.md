@@ -72,8 +72,8 @@ $employees->find()
 ---
 
 ```sql
-SELECT * FROM employees Employees LIMIT 1
-SELECT * FROM salaries Salaries INNER JOIN (SELECT (Employees.id) FROM employees Employees GROUP BY Employees.id  LIMIT 1) Employees ON Salaries.employee_id = (Employees.id)
+SELECT * FROM employees Employees LIMIT 1;
+SELECT * FROM salaries Salaries INNER JOIN (SELECT (Employees.id) FROM employees Employees GROUP BY Employees.id  LIMIT 1) Employees ON Salaries.employee_id = (Employees.id);
 ```
 
 ```php
@@ -89,8 +89,8 @@ $employees->find()
 # Filtering, top down
 
 ```sql
-SELECT * FROM employees Employees LIMIT 1
-SELECT * FROM salaries Salaries WHERE (Salaries.employee_id in (10001) AND salary >= 1000)
+SELECT * FROM employees Employees LIMIT 1;
+SELECT * FROM salaries Salaries WHERE (Salaries.employee_id in (10001) AND salary >= 1000);
 ```
 
 ```php
@@ -106,12 +106,30 @@ $employees->find()
     ->limit(1);
 ```
 
-
-# Expressions and functions
----
+# Filtering, bottom up
 
 ```sql
-SELECT * FROM employees WHERE (CONCAT(first_name, ' ', last_name) LIKE 'luft aron%') OR
+SELECT * FROM employees Employees
+    INNER JOIN salaries Salaries ON (
+        salary >= 1000 AND
+        Employees.id = (Salaries.employee_id)
+    );
+```
+
+```php
+$employees->find()
+    ->matching('Salaries', function(\Cake\ORM\Query $q) {
+        return $q->where([
+            'salary >=' => 1000
+        ]);
+    })->limit(1)
+```
+
+# Expressions and functions
+
+```sql
+SELECT * FROM employees
+    WHERE (CONCAT(first_name, ' ', last_name) LIKE 'luft aron%') OR
 (CONCAT(last_name, ' ', first_name) LIKE 'luft aron%');
 ```
 
@@ -154,21 +172,18 @@ $employees->find()
     ]);
 ```
 ```sql
-SELECT 
+SELECT
   e.first_name,
-  s.from_date, 
+  s.from_date,
   s.salary
-FROM 
+FROM
   employees AS e
-  INNER JOIN salaries AS s ON e.id = (s.employee_id) 
-WHERE 
-  (
-    s.from_date BETWEEN '1985-12-01' 
-    AND '1987-12-01' 
+  INNER JOIN salaries AS s ON e.id = (s.employee_id)
+WHERE (
+    s.from_date BETWEEN '1985-12-01'
+    AND '1987-12-01'
     AND s.salary > 60000
-  ) 
-LIMIT 
-  10
+);
 ```
 
 ```php
