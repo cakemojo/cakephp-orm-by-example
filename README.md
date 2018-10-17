@@ -124,7 +124,7 @@ $employees->find()
         return $q->where([
             'salary >=' => 1000
         ]);
-    })->limit(1)
+    });
 ```
 
 # Expressions and functions
