@@ -29,6 +29,11 @@ We're using https://github.com/lorenzo/cakephp3-advanced-examples/blob/master/co
 ```php
 $employees = \Cake\ORM\TableRegistry::getTableLocator()->get('Employees');
 ```
+# Read more / learn more
+
+* https://book.cakephp.org/3.0/en/orm.html
+* https://book.cakephp.org/3.0/en/orm/query-builder.html
+* https://github.com/lorenzo/cakephp3-advanced-examples
 
 # Simple queries
 
